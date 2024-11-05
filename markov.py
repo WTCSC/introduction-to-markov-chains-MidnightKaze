@@ -1,5 +1,6 @@
 import random
 import argparse
+import re
 
 """
 Create the sample text and the dictionary to store word transitions
@@ -18,8 +19,9 @@ Build the Markov Chain
 
 TODO: Handle punctuation and capitalization for better results
 """  
-# Note to self u probably don't wanna include ' since that's usually APART of the word itself
-words = text.split()
+# Note to self: u probably don't wanna include ' since that's usually APART of the word itself
+# Another note to self: u might wanna make a tokener function and a split function for the sake of ur sanity
+words = re.split(r"\s+", text) # Yknow regular expressions kind of suck but I'll make it work lol
 for i in range(len(words) - 1):
     current_word = words[i]
     next_word = words[i + 1]
@@ -44,7 +46,7 @@ e.g., capitalization, punctuation, line breaks, etc.
 """
 def generate_text(start_word, num_words):
     current_word = start_word
-    result = [] # Literally bulding the sentence word by word
+    result = [] # Literally building the sentence word by word
     start_sentence = True # The check for the first word of a sentence
 
     for _ in range(num_words):
@@ -61,17 +63,6 @@ def generate_text(start_word, num_words):
             break
 
     return " ".join(result) # Joins all the words with a space :)
-
-
-"""for _ in range(num_words - 1):
-        if current_word in transitions:
-            next_word = random.choice(transitions[current_word])
-            result.append(next_word)
-            current_word = next_word
-        else:
-            break
-    return " ".join(result)
-"""
 
 """
 Example usage, generating 10 words starting with "Mary"
