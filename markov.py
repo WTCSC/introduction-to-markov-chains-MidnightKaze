@@ -1,12 +1,13 @@
 import random
+import argparse
 
 """
 Create the sample text and the dictionary to store word transitions
 
 TODO: Replace the sample text with a larger text for more interesting results
 """
-text = "Mary had a little lamb its fleece was white as snow"
-transitions = {}
+text = "Akina woke up at the crack of dawn. A soft white cat and black dog rested next to her. Outside, snow gently fell from the sky. Each snowflake makes a small twinkle as it hits the ground. She had about two hours until class started and decided it was still too early to wake up for morning training."
+transitions = {} # Just so u remember this is the word key dictionary thingy
 
 """
 Build the Markov Chain
@@ -16,7 +17,8 @@ Build the Markov Chain
 3. For each word, add the next word to the list of transitions
 
 TODO: Handle punctuation and capitalization for better results
-"""
+"""  
+# Note to self u probably don't wanna include ' since that's usually APART of the word itself
 words = text.split()
 for i in range(len(words) - 1):
     current_word = words[i]
@@ -42,8 +44,26 @@ e.g., capitalization, punctuation, line breaks, etc.
 """
 def generate_text(start_word, num_words):
     current_word = start_word
-    result = [current_word]
-    for _ in range(num_words - 1):
+    result = [] # Literally bulding the sentence word by word
+    start_sentence = True # The check for the first word of a sentence
+
+    for _ in range(num_words):
+        if start_sentence: # If it's the start of a sentence
+            result.append(current_word.capitalize()) # Capitalize the word and add it to the list
+            start_sentence = False # Can't capitalize any following words until the next sentence
+        else: 
+            result.append(current_word) # Else add the word as is
+                # Allowing the words to be added as they are will allow for proper nouns to be correctly processed and whatnot
+        
+        if current_word in transitions: # Finishes out the rest of the sentence contruction
+            current_word = random.choice(transitions[current_word])
+        else:
+            break
+
+    return " ".join(result) # Joins all the words with a space :)
+
+
+"""for _ in range(num_words - 1):
         if current_word in transitions:
             next_word = random.choice(transitions[current_word])
             result.append(next_word)
@@ -51,10 +71,11 @@ def generate_text(start_word, num_words):
         else:
             break
     return " ".join(result)
+"""
 
 """
 Example usage, generating 10 words starting with "Mary"
 
 TODO: Accept user input for the starting word and number of words to generate
 """
-print(generate_text("Mary", 10))
+print(generate_text("a", 20))
