@@ -1,49 +1,45 @@
 import random
 import argparse
-import re
 
-"""
-Create the sample text and the dictionary to store word transitions
+def get_text(filepath):
+    with open(filepath, 'r', errors="ignore") as file:
+        text_file = " ".join ([i.strip for i in file.readlines()])
+    return text_file
 
-TODO: Replace the sample text with a larger text for more interesting results
-"""
-text = "Akina woke up at the crack of dawn. A soft white cat and black dog rested next to her. Outside, snow gently fell from the sky. Each snowflake makes a small twinkle as it hits the ground. She had about two hours until class started and decided it was still too early to wake up for morning training."
-transitions = {} # Just so u remember this is the word key dictionary thingy
+parser = argparse.ArgumentParser()
+parser.add_argument("text")
+parser.add_argument("start")
+parser.add_argument("length", type=int)
+args = parser.parse_args()
 
-"""
-Build the Markov Chain
+text = get_text(args.text) 
+words = text.split()
+transitions = {}
+tokens = []
+token = ""
 
-1. Split the text into words
-2. Iterate over the words
-3. For each word, add the next word to the list of transitions
+for word in words:
+    for char in word: # Breaks the words in the word list into a single char
+        if char in '.?!,:;"': # So it can then check if its a punctuation mark
+            if token:
+                tokens.append(token)
+                token = ""
+            tokens.append(char)
+        else:
+            token += char
+    if token:
+        tokens.append(token)
+        token = ""
 
-TODO: Handle punctuation and capitalization for better results
-"""  
-# Note to self: u probably don't wanna include ' since that's usually APART of the word itself
-# Another note to self: u might wanna make a tokener function and a split function for the sake of ur sanity
-words = re.split(r"\s+", text) # Yknow regular expressions kind of suck but I'll make it work lol
-for i in range(len(words) - 1):
-    current_word = words[i]
-    next_word = words[i + 1]
-    if current_word not in transitions:
-        transitions[current_word] = []
-    transitions[current_word].append(next_word)
+for i in range(len(tokens) - 1):
+    token = tokens[i]
+    next_token = tokens[i + 1]
 
-"""
-Generate new text using the Markov Chain, starting with a given word and
-generating a specified number of words:
+    if token not in transitions:
+        transitions[token] = []
+    transitions[token].append(next_token)
+                
 
-1. Start with the given word
-2. Add the word to the result list
-3. For the specified number of words:
-    a. If the current word is in the transitions dictionary, choose a random next word
-    b. Add the next word to the result list
-    c. Update the current word to the next word
-4. Return the generated text as a string
-
-TODO: Clean up the generated text for better formatting and readability,
-e.g., capitalization, punctuation, line breaks, etc.
-"""
 def generate_text(start_word, num_words):
     current_word = start_word
     result = [] # Literally building the sentence word by word
@@ -64,9 +60,4 @@ def generate_text(start_word, num_words):
 
     return " ".join(result) # Joins all the words with a space :)
 
-"""
-Example usage, generating 10 words starting with "Mary"
-
-TODO: Accept user input for the starting word and number of words to generate
-"""
-print(generate_text("a", 20))
+print(generate_text(args.start, args.length))
