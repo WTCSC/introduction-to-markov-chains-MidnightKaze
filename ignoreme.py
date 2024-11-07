@@ -1,12 +1,12 @@
 import random
 import argparse
 
-def get_text(filepath):
+def get_text(filepath): #this allows us to use an text file
     with open(filepath, 'r') as file:
-        text = " ".join([i.strip() for i in file.readlines()])
+        text = " ".join([i.strip() for i in file.readlines()]) # This will take the whole text file and turn it into a simgle line
     return text
 
-def generate_the_chain(text):
+def generate_the_chain(text): # For sake of easier token and transition creation, I made a new function that can be later called
     words = text.split()
     transitions = {}
     tokens = []
@@ -16,8 +16,8 @@ def generate_the_chain(text):
             if char in '.?!,:;"': # So it can then check if its a punctuation mark
                 if token:
                     tokens.append(token)
-                    token = ""
-                tokens.append(char)
+                    token = "" # Resets the token
+                tokens.append(char) # Adds the puncuation as a single token
             else:
                 token += char
         if token:
@@ -67,3 +67,10 @@ text = get_text(filepath)
 transitions = generate_the_chain(text)
 
 print (generate_text(start_word, num_words))
+
+
+"""
+Some odd issues occur when using the text samples I provided-- probably because they are copied and pasted from a Google Doc.
+â€˜ occurs as well as other symbols in place of a "right single quote" and "left single quote" (and some other things)
+But I promise everything works as instended!
+"""
